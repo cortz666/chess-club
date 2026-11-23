@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }} · Chess Atelier{% endblock %}
+{% block contenido %}
+<a href="{{ url_for('detalle', id=a.id) if a.id else url_for('index') }}" class="volver">← Cancelar</a>
+<section class="formulario">
+  <h1>{{ titulo }}</h1>
+  <form method="post">
+    <label>Nombre de la apertura
+      <input name="nombre" value="{{ a.nombre or '' }}" required maxlength="100">
+    </label>
+    <div class="fila">
+      <label>Jugadas iniciales
+        <input name="jugadas" value="{{ a.jugadas or '' }}" placeholder="1.e4 e5 2.Cf3" required maxlength="100">
+      </label>
+      <label>Nivel
+        <select name="nivel" required>
+          {% for n in niveles %}<option {{ 'selected' if n == a.nivel }}>{{ n }}</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+    <label>Descripción
+      <textarea name="descripcion" rows="4" required minlength="10">{{ a.descripcion or '' }}</textarea>
+    </label>
+    <label>Enlace de imagen (Cloudinary, Imgur, Picsum, Wikimedia…)
+      <input type="url" name="imagen_url" value="{{ a.imagen_url or '' }}" placeholder="https://...">
+    </label>
+    <label>Enlace de video de YouTube
+      <input type="url" name="video_url" value="{{ a.video_url or '' }}" placeholder="https://youtu.be/...">
+    </label>
+    <button class="btn">Guardar</button>
+  </form>
+</section>
+{% endblock %}
