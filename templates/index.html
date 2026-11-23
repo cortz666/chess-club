@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block contenido %}
+<section class="hero">
+  <div>
+    <h1>Aprende aperturas de ajedrez</h1>
+    <p>Explora, agrega y comenta las aperturas favoritas del club. Cada apertura guarda su información en la base de datos y muestra imágenes y videos alojados en la nube.</p>
+    <div class="stats">
+      <div><strong>{{ stats.total }}</strong><span>aperturas</span></div>
+      <div><strong>{{ stats.likes }}</strong><span>me gusta</span></div>
+      <div><strong>{{ ncom }}</strong><span>comentarios</span></div>
+    </div>
+  </div>
+  <div class="hero__tablero" aria-hidden="true">
+    {% for i in range(64) %}<span class="{{ 'osc' if (i // 8 + i) % 2 else '' }}"></span>{% endfor %}
+  </div>
+</section>
+
+<form class="filtros" method="get">
+  <input type="search" name="buscar" value="{{ buscar }}" placeholder="Buscar por nombre o jugada (ej. e4)">
+  <select name="nivel">
+    <option value="">Todos los niveles</option>
+    {% for n in niveles %}<option {{ 'selected' if n == nivel }}>{{ n }}</option>{% endfor %}
+  </select>
+  <button class="btn">Filtrar</button>
+  {% if buscar or nivel %}<a class="btn btn--linea" href="{{ url_for('index') }}">Limpiar</a>{% endif %}
+</form>
+
+{% if aperturas %}
+<section class="grid">
+  {% for a in aperturas %}
+  <article class="card">
+    <a href="{{ url_for('detalle', id=a.id) }}" class="card__img">
+      <img src="{{ a.imagen_url or url_for('static', filename='sin-imagen.svg') }}" alt="{{ a.nombre }}" loading="lazy"
+           onerror="this.onerror=null;this.src='{{ url_for('static', filename='sin-imagen.svg') }}'">
+      <span class="etiqueta etiqueta--{{ a.nivel|lower }}">{{ a.nivel }}</span>
+    </a>
+    <div class="card__cuerpo">
+      <h2><a href="{{ url_for('detalle', id=a.id) }}">{{ a.nombre }}</a></h2>
+      <code>{{ a.jugadas }}</code>
+      <p>{{ a.descripcion[:110] }}{% if a.descripcion|length > 110 %}…{% endif %}</p>
+      <div class="card__pie">
+        <form method="post" action="{{ url_for('like', id=a.id) }}"><button class="like">♥ {{ a.likes }}</button></form>
+        {% if youtube_id(a.video_url) %}<span class="tiene-video">▶ Video</span>{% endif %}
+        <a href="{{ url_for('detalle', id=a.id) }}" class="btn btn--chico">Ver más</a>
+      </div>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+{% else %}
+<p class="vacio">No se encontraron aperturas. <a href="{{ url_for('nueva') }}">Agrega una nueva</a>.</p>
+{% endif %}
+
+<section id="multimedia" class="multimedia">
+  <h2>Multimedia del club</h2>
+  <p>Contenido incrustado desde plataformas de servicios en la nube.</p>
+  <div class="multimedia__grid">
+    <div class="video">
+      <iframe src="https://www.youtube.com/embed/Es_tkcPQJZU" title="Video del club (YouTube)" loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <ul class="enlaces">
+      <li><span>▶</span><a href="https://youtu.be/Es_tkcPQJZU" target="_blank" rel="noopener">Video del club en YouTube</a></li>
+      <li><span>🖼</span><a href="https://picsum.photos/" target="_blank" rel="noopener">Imágenes servidas por Lorem Picsum (CDN)</a></li>
+      <li><span>♞</span><a href="https://lichess.org/learn" target="_blank" rel="noopener">Practica en Lichess</a></li>
+      <li><span>Aa</span><a href="https://fonts.google.com/" target="_blank" rel="noopener">Tipografías de Google Fonts</a></li>
+    </ul>
+  </div>
+</section>
+{% endblock %}
