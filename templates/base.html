@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block titulo %}Chess Atelier · Club de Aperturas{% endblock %}</title>
+  <!-- Fuentes servidas desde Google Fonts (CDN en la nube) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="header">
+    <div class="contenedor header__inner">
+      <a href="{{ url_for('index') }}" class="logo"><span class="logo__icono">♛</span> Chess Atelier <small>Club</small></a>
+      <input type="checkbox" id="menu-toggle" class="menu-toggle" aria-label="Abrir menú">
+      <label for="menu-toggle" class="hamburguesa"><span></span><span></span><span></span></label>
+      <nav class="nav">
+        <a href="{{ url_for('index') }}">Aperturas</a>
+        <a href="{{ url_for('index') }}#multimedia">Multimedia</a>
+        <a href="{{ url_for('nueva') }}" class="btn btn--claro">+ Agregar</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in mensajes %}
+        <div class="alerta alerta--{{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="contenedor footer__inner">
+      <p><strong>Chess Atelier · Club de Aperturas</strong> — aplicación web dinámica con Flask y PostgreSQL.</p>
+      <p>Desarrollado por Coral Martínez Sánchez · Código 225385497 · Desarrollo de Software</p>
+      <p class="footer__nube">Imágenes: Lorem Picsum · Videos: YouTube · Fuentes: Google Fonts · Hosting y base de datos: Render</p>
+    </div>
+  </footer>
+</body>
+</html>
