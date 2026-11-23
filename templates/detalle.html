@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block titulo %}{{ a.nombre }} · Chess Atelier{% endblock %}
+{% block contenido %}
+<a href="{{ url_for('index') }}" class="volver">← Volver a las aperturas</a>
+
+<article class="detalle">
+  <div class="detalle__media">
+    <img src="{{ a.imagen_url or url_for('static', filename='sin-imagen.svg') }}" alt="{{ a.nombre }}"
+         onerror="this.onerror=null;this.src='{{ url_for('static', filename='sin-imagen.svg') }}'">
+    {% set vid = youtube_id(a.video_url) %}
+    {% if vid %}
+    <div class="video">
+      <iframe src="https://www.youtube.com/embed/{{ vid }}" title="Video: {{ a.nombre }}" loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="detalle__info">
+    <span class="etiqueta etiqueta--{{ a.nivel|lower }}">{{ a.nivel }}</span>
+    <h1>{{ a.nombre }}</h1>
+    <code class="jugadas">{{ a.jugadas }}</code>
+    <p>{{ a.descripcion }}</p>
+    <div class="acciones">
+      <form method="post" action="{{ url_for('like', id=a.id) }}"><button class="like like--grande">♥ Me gusta ({{ a.likes }})</button></form>
+      <a href="{{ url_for('editar', id=a.id) }}" class="btn btn--linea">Editar</a>
+      <form method="post" action="{{ url_for('eliminar', id=a.id) }}" onsubmit="return confirm('¿Eliminar esta apertura?');">
+        <button class="btn btn--peligro">Eliminar</button>
+      </form>
+    </div>
+
+    <section id="comentarios" class="comentarios">
+      <h2>Comentarios ({{ comentarios|length }})</h2>
+      <form method="post" action="{{ url_for('comentar', id=a.id) }}" class="form-comentario">
+        <input name="autor" placeholder="Tu nombre" maxlength="60" required>
+        <textarea name="texto" placeholder="¿Qué opinas de esta apertura?" maxlength="500" rows="3" required></textarea>
+        <button class="btn">Publicar</button>
+      </form>
+      {% for c in comentarios %}
+      <div class="comentario">
+        <strong>{{ c.autor }}</strong>
+        <p>{{ c.texto }}</p>
+      </div>
+      {% else %}
+      <p class="vacio">Aún no hay comentarios. ¡Sé el primero!</p>
+      {% endfor %}
+    </section>
+  </div>
+</article>
+{% endblock %}
